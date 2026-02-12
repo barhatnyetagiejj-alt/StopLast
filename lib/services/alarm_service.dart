@@ -62,7 +62,7 @@ class AlarmService extends ChangeNotifier {
     const android = AndroidInitializationSettings('@mipmap/ic_launcher');
     const iOS = DarwinInitializationSettings();
     const settings = InitializationSettings(android: android, iOS: iOS);
-    await _localNotifications.initialize(settings);
+    await _localNotifications.initialize(settings: settings, onDidReceiveNotificationResponse: (NotificationResponse r) {});
   }
 
   // ===== LIFECYCLE =====
@@ -158,7 +158,7 @@ class AlarmService extends ChangeNotifier {
       final body = 'Приближаемся к остановке ${_target?.name ?? ''}';
       const androidDetails = AndroidNotificationDetails('laststop_channel', 'LastStop Alerts', importance: Importance.max, priority: Priority.high);
       const platform = NotificationDetails(android: androidDetails);
-      await _localNotifications.show(0, title, body, platform);
+      await _localNotifications.show(id: 0, title: title, body: body, notificationDetails: platform);
     } catch (e) {
       if (kDebugMode) {
         print('❌ Alarm error: $e');

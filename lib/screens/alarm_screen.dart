@@ -3,9 +3,7 @@ import '../widgets/bottom_nav.dart';
 import '../widgets/alarm_toggle.dart';
 import '../widgets/app_button.dart';
 import '../widgets/stop_tile.dart';
-import '../services/stop_service.dart';
 import '../services/alarm_service.dart';
-import '../models/stop_model.dart';
 import '../utils/constants.dart';
 
 class AlarmScreen extends StatefulWidget {
