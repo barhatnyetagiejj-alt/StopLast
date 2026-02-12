@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import '../models/stop_model.dart';
 import 'stop_service.dart';
@@ -16,6 +17,9 @@ import 'stop_service.dart';
 class AlarmService extends ChangeNotifier {
   AlarmService._internal();
   static final AlarmService instance = AlarmService._internal();
+
+  static final FlutterLocalNotificationsPlugin _localNotifications = FlutterLocalNotificationsPlugin();
+
 
   // ===== AUDIO =====
   final AudioPlayer _player = AudioPlayer();
@@ -42,6 +46,14 @@ class AlarmService extends ChangeNotifier {
     _stops = StopService.getStops();
     _currentIndex = 0;
     _alarmTriggered = false;
+    _initNotifications();
+  }
+
+  Future<void> _initNotifications() async {
+    const android = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const iOS = DarwinInitializationSettings();
+    const settings = InitializationSettings(android: android, iOS: iOS);
+    await _localNotifications.initialize(settings);
   }
 
   // ===== LIFECYCLE =====
@@ -132,6 +144,12 @@ class AlarmService extends ChangeNotifier {
         AssetSource('alarm.mp3'),
         volume: 1.0,
       );
+      // show local notification
+      final title = 'LastStop';
+      final body = 'Приближаемся к остановке ${_target?.name ?? ''}';
+      const androidDetails = AndroidNotificationDetails('laststop_channel', 'LastStop Alerts', importance: Importance.max, priority: Priority.high);
+      const platform = NotificationDetails(android: androidDetails);
+      await _localNotifications.show(0, title, body, platform);
     } catch (e) {
       if (kDebugMode) {
         print('❌ Alarm error: $e');
