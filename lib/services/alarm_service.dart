@@ -42,11 +42,20 @@ class AlarmService extends ChangeNotifier {
   Timer? _timer;
 
   // ===== INIT =====
-  void init() {
-    _stops = StopService.getStops();
+  Future<void> init() async {
+    // Load cached stops first for fast startup
+    _stops = await StopService.readCachedStops();
     _currentIndex = 0;
     _alarmTriggered = false;
-    _initNotifications();
+    await _initNotifications();
+
+    // Refresh stops from network in background
+    StopService.fetchAndCacheStops().then((fetched) {
+      if (fetched.isNotEmpty) {
+        _stops = fetched;
+        notifyListeners();
+      }
+    }).catchError((_) {});
   }
 
   Future<void> _initNotifications() async {

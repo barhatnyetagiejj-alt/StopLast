@@ -12,7 +12,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Initialize services
   await AuthService.instance.init();
-  AlarmService.instance.init();
+  await AlarmService.instance.init();
   runApp(const LastStopApp());
 }
 

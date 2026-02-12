@@ -17,13 +17,11 @@ class AlarmScreen extends StatefulWidget {
 
 class _AlarmScreenState extends State<AlarmScreen> {
   final AlarmService _alarm = AlarmService.instance;
-  late final List<StopModel> _stops;
   bool _modeTimeStop = false;
 
   @override
   void initState() {
     super.initState();
-    _stops = StopService.getStops();
     _alarm.addListener(_onServiceUpdated);
   }
 
@@ -105,9 +103,9 @@ class _AlarmScreenState extends State<AlarmScreen> {
                 // STOP LIST
                 Expanded(
                   child: ListView.builder(
-                    itemCount: _stops.length,
+                    itemCount: _alarm.stops.length,
                     itemBuilder: (context, idx) {
-                      final stop = _stops[idx];
+                      final stop = _alarm.stops[idx];
                       return StopTile(
                         stop: stop,
                         selected: _alarm.target == stop,
@@ -127,7 +125,7 @@ class _AlarmScreenState extends State<AlarmScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Текущая: ${_stops[currentIndex].name}', style: const TextStyle(fontSize: 14)),
+                    Text('Текущая: ${_alarm.stops[currentIndex].name}', style: const TextStyle(fontSize: 14)),
                     Row(
                       children: [
                         AppButton.ghost(
